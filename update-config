@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+set -x
+
+cabal new-build
+unlink ~/bin/xmonad-config
+bin=`fd -I -tf -E xmonad-config.cabal xmonad-config`
+cp $bin ~/bin
