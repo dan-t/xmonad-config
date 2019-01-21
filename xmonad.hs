@@ -31,7 +31,7 @@ showVolume = do
    dzenConfig centered str
    where
       centered =
-	 onCurr (center 200 66)
+         onCurr (center 200 66)
             >=> font "-*-courier new-*-r-*-*-32-*-*-*-*-*-*-*"
             >=> addArgs ["-fg", "#80c0ff"]
             >=> addArgs ["-bg", "#000040"]
