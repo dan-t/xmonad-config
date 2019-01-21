@@ -60,8 +60,7 @@ main = do
       `additionalKeys`
          [ ((myModMask .|. shiftMask, xK_s), spawn "sudo /sbin/poweroff")
          , ((myModMask .|. shiftMask, xK_r), spawn "sudo /sbin/reboot")
-         , ((myModMask .|. shiftMask, xK_h), spawn "xflock4" >> spawn "sudo /usr/sbin/pm-hibernate")
-         , ((myModMask .|. shiftMask, xK_l), spawn "xflock4")
+         , ((myModMask .|. shiftMask, xK_l), spawn "lock")
          , ((myModMask, xK_Escape)         , mute          >> showVolume)
          , ((myModMask, xK_F1)             , lowerVolume 4 >> showVolume)
          , ((myModMask, xK_F2)             , raiseVolume 4 >> showVolume)
