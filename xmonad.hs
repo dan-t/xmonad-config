@@ -65,9 +65,9 @@ main = do
          [ ((myModMask .|. shiftMask, xK_s), spawn "sudo /sbin/poweroff")
          , ((myModMask .|. shiftMask, xK_r), spawn "sudo /sbin/reboot")
          , ((myModMask .|. shiftMask, xK_l), spawn "lock")
-         , ((myModMask, xK_Escape)         , setVolume "toggle"                       >> showVolume)
-         , ((myModMask, xK_F1)             , (setVolume "unmute") >> (setVolume "5-") >> showVolume)
-         , ((myModMask, xK_F2)             , (setVolume "unmute") >> (setVolume "5+") >> showVolume)
+         , ((myModMask, xK_Escape)         , setVolume "toggle"               >> showVolume)
+         , ((myModMask, xK_F1)             , mapM_ setVolume ["unmute", "5-"] >> showVolume)
+         , ((myModMask, xK_F2)             , mapM_ setVolume ["unmute", "5+"] >> showVolume)
          ]
    where
       -- use the windows key as the mod key
