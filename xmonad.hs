@@ -4,6 +4,7 @@ import XMonad
 import XMonad.Core
 import XMonad.Util.EZConfig
 import XMonad.Util.Run (spawnPipe, runProcessWithInput)
+import XMonad.Util.Dzen
 import XMonad.Hooks.ManageHelpers
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
@@ -17,17 +18,27 @@ import qualified XMonad.StackSet as SS
 import Data.Default
 import System.IO
 import System.Directory (doesFileExist, getHomeDirectory)
-import System.Process (readProcessWithExitCode, system)
 import qualified Data.List as L
 import Control.Applicative ((<$>))
+import Control.Monad (void)
 
-setVolume :: String -> X ()
-setVolume vol = liftIO $ system ("amixer set Master " ++ vol) >> return ()
+setVolume :: [String] -> X ()
+setVolume vol = void $ runProcessWithInput "amixer" (["set", "Master"] ++ vol) ""
 
 getVolume :: X String
 getVolume = do
-   (exitCode, stdout, stderr) <- liftIO $ readProcessWithExitCode "amixer" ["get", "Master"] ""
-   return $ takeWhile (\c -> c /= '[') stdout
+   stdout <- runProcessWithInput "amixer" ["get", "Master"] ""
+   return $ dropWhile (/= '[') stdout
+
+showMessage :: String -> X ()
+showMessage msg = dzenConfig centered msg
+   where centered = onCurr (center 500 66)
+                       >=> font "-*-courier new-*-r-*-*-32-*-*-*-*-*-*-*"
+                       >=> addArgs ["-fg", "#80c0ff"]
+                       >=> addArgs ["-bg", "#000040"]
+
+showVolume :: X ()
+showVolume = getVolume >>= showMessage
 
 main :: IO ()
 main = do
@@ -54,9 +65,9 @@ main = do
          [ ((myModMask .|. shiftMask, xK_s), spawn "sudo /sbin/poweroff")
          , ((myModMask .|. shiftMask, xK_r), spawn "sudo /sbin/reboot")
          , ((myModMask .|. shiftMask, xK_l), spawn "lock")
-         , ((myModMask, xK_Escape)         , setVolume "mute")
-         , ((myModMask, xK_F1)             , setVolume "unmute 2-")
-         , ((myModMask, xK_F2)             , setVolume "unmute 2+")
+         , ((myModMask, xK_Escape)         , setVolume ["toggle"]       >> showVolume)
+         , ((myModMask, xK_F1)             , setVolume ["unmute", "5-"] >> showVolume)
+         , ((myModMask, xK_F2)             , setVolume ["unmute", "5+"] >> showVolume)
          ]
    where
       -- use the windows key as the mod key
