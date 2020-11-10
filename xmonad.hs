@@ -4,8 +4,6 @@ import XMonad
 import XMonad.Core
 import XMonad.Util.EZConfig
 import XMonad.Util.Run (spawnPipe, runProcessWithInput)
-import XMonad.Actions.Volume
-import XMonad.Util.Dzen
 import XMonad.Hooks.ManageHelpers
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
@@ -16,30 +14,26 @@ import XMonad.Layout.PerWorkspace
 import XMonad.Layout.WorkspaceDir
 import XMonad.Layout.Fullscreen
 import qualified XMonad.StackSet as SS
-import XMonad.Config
+import Data.Default
 import System.IO
 import System.Directory (doesFileExist, getHomeDirectory)
+import System.Process (readProcessWithExitCode, system)
 import qualified Data.List as L
 import Control.Applicative ((<$>))
 
+setVolume :: String -> X ()
+setVolume vol = liftIO $ system ("amixer set Master " ++ vol) >> return ()
 
-mute = setVolume 0
+getVolume :: X String
+getVolume = do
+   (exitCode, stdout, stderr) <- liftIO $ readProcessWithExitCode "amixer" ["get", "Master"] ""
+   return $ takeWhile (\c -> c /= '[') stdout
 
-showVolume = do
-   vol  <- getVolume
-   let str = if vol == 0 then "[muted]" else show $ round vol
-   dzenConfig centered str
-   where
-      centered =
-         onCurr (center 200 66)
-            >=> font "-*-courier new-*-r-*-*-32-*-*-*-*-*-*-*"
-            >=> addArgs ["-fg", "#80c0ff"]
-            >=> addArgs ["-bg", "#000040"]
-
+main :: IO ()
 main = do
    xmrc   <- xmobarrc
    xmproc <- spawnPipe $ "xmobar " ++ xmrc
-   xmonad $ ewmh $ fullscreenSupport $ defaultConfig
+   xmonad $ ewmh $ fullscreenSupport $ def
       { terminal = "xterm"
       , modMask = myModMask
       , focusedBorderColor = "blue"
@@ -60,9 +54,9 @@ main = do
          [ ((myModMask .|. shiftMask, xK_s), spawn "sudo /sbin/poweroff")
          , ((myModMask .|. shiftMask, xK_r), spawn "sudo /sbin/reboot")
          , ((myModMask .|. shiftMask, xK_l), spawn "lock")
-         , ((myModMask, xK_Escape)         , mute          >> showVolume)
-         , ((myModMask, xK_F1)             , lowerVolume 4 >> showVolume)
-         , ((myModMask, xK_F2)             , raiseVolume 4 >> showVolume)
+         , ((myModMask, xK_Escape)         , setVolume "mute")
+         , ((myModMask, xK_F1)             , setVolume "unmute 2-")
+         , ((myModMask, xK_F2)             , setVolume "unmute 2+")
          ]
    where
       -- use the windows key as the mod key
