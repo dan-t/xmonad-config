@@ -50,11 +50,10 @@ main = do
          [ -- new windows are always opened in master
            doF SS.swapMaster
 
-           -- open visper squish window floating
+           -- open these applications with floating windows
          , ("VisPER_MESA_SQUISH" `L.isPrefixOf`) <$> className --> doFloat
-
-           -- open visper squish window floating
          , ("VisPER_SQUISH" `L.isPrefixOf`) <$> className --> doFloat
+         , ("xfig" `L.isPrefixOf`) <$> className --> doFloat
          ]
       }
       `additionalKeys`
