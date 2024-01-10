@@ -3,6 +3,8 @@
 set -x
 
 cabal build
-unlink ~/bin/xmonad-config
+[ -e ~/bin/xmonad-config ] && rm -f ~/bin/xmonad-config
+[ -L ~/bin/xmonad-x86_64-linux ] && rm -f ~/bin/xmonad-x86_64-linux
 bin=`fd -I -tf -E xmonad-config.cabal xmonad-config`
 cp $bin ~/bin
+ln -s ~/bin/xmonad-config ~/bin/xmonad-x86_64-linux
