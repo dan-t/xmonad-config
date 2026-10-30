@@ -14,6 +14,7 @@ import XMonad.Layout.DragPane
 import XMonad.Layout.PerWorkspace
 import XMonad.Layout.WorkspaceDir
 import XMonad.Layout.Fullscreen
+import Graphics.X11.Xlib (raiseWindow)
 import qualified XMonad.StackSet as SS
 import Data.Default
 import System.IO
@@ -48,6 +49,8 @@ main = do
       { terminal = "xterm"
       , modMask = myModMask
       , focusedBorderColor = "blue"
+      , focusFollowsMouse = True
+      , clickJustFocuses = False
       , borderWidth = 4
       , handleEventHook = docksEventHook
       , layoutHook = layoutHook'
@@ -60,6 +63,9 @@ main = do
          , ("VisPER_SQUISH" `L.isPrefixOf`) <$> className --> doFloat
          , ("xfig" `L.isPrefixOf`) <$> className --> doFloat
          ]
+--      , logHook = withFocused $ \w ->
+--           withDisplay $ \d ->
+--              io $ raiseWindow d w
       }
       `additionalKeys`
          [ ((myModMask .|. shiftMask, xK_s), spawn "sudo /sbin/poweroff")

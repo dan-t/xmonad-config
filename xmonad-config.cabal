@@ -19,4 +19,5 @@ executable xmonad-config
         data-default >=0.7,
         xmonad >=0.15,
         xmonad-contrib >=0.15.0,
-        xmonad-extras >=0.15.1 && <0.16
+        xmonad-extras >=0.15.1,
+        X11 >=1.10.3
