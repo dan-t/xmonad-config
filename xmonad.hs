@@ -14,6 +14,7 @@ import XMonad.Layout.DragPane
 import XMonad.Layout.PerWorkspace
 import XMonad.Layout.WorkspaceDir
 import XMonad.Layout.Fullscreen
+import XMonad.Layout.Master
 import Graphics.X11.Xlib (raiseWindow)
 import qualified XMonad.StackSet as SS
 import Data.Default
@@ -79,7 +80,7 @@ main = do
       -- use the windows key as the mod key
       myModMask = mod4Mask
 
-      layoutHook' = avoidStruts (tiled ||| noBorders Full)
+      layoutHook' = avoidStruts (tiled ||| (mastered (3/100) (1/3) $ Tall 1 (3/100) (1/2)) ||| noBorders Full)
          where
             -- default tiling algorithm partitions the screen into two panes
             tiled   = Tall nmaster delta ratio
